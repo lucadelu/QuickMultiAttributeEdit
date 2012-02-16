@@ -1,15 +1,15 @@
 # --------------------------------------------------------
-#    mmqgis_menu - QGIS plugins menu class
+#    QuickMultiAttributeEdit_menu - QGIS plugins menu class
 #
 #    begin                : May 9, 2011
 #    copyright            : (c) 2011 by Marco Braida
 #    email                : marcobra.ubuntu at gmail.com
 #
-#   MBQGIS is free software and is offered without guarantee
-#   or warranty. You can redistribute it and/or modify it 
-#   under the terms of version 2 of the GNU General Public 
-#   License (GPL v2) as published by the Free Software 
-#   Foundation (www.gnu.org).
+#   QuickMultiAttributeEdit is free software and is offered 
+#   without guarantee or warranty. You can redistribute it 
+#   and/or modify it under the terms of version 2 of the 
+#   GNU General Public License (GPL v2) as published by the 
+#   Free Software Foundation (www.gnu.org).
 # --------------------------------------------------------
 
 from PyQt4.QtCore import *

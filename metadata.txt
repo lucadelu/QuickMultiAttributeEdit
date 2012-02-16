@@ -3,7 +3,7 @@
 name=QuickMultiAttributeEdit
 qgisMinimumVersion=1.0
 description=Edit and assing same column value in the attribute table for the selected elements
-version=version 0.1
+version=version 0.2
 ; end of mandatory metadata
 
 ; start of optional metadata
@@ -18,8 +18,8 @@ tags=vector,attribute,database,update
 ; be probably possible to create a project on redmine
 ; if they are not filled
 ;homepage=
-;tracker=
-;repository=
+tracker=http://hub.qgis.org/projects/quickmultiattribute
+repository=https://github.com/lucadelu/QuickMultiAttributeEdit
 icon=icons/quickmultiattributeedit_update_selected.png
 
 ; experimental flag
