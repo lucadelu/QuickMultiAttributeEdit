@@ -28,7 +28,7 @@ class quickmultiattributeedit_menu:
 		icon = QIcon(os.path.dirname(__file__) + "/icons/quickmultiattributeedit_update_selected.png")
 		self.update_selected_action = QAction(icon, "Update field of selected features", self.iface.mainWindow())
 		QObject.connect(self.update_selected_action, SIGNAL("triggered()"), self.update_selected)
-		self.iface.registerMainWindowAction(self.update_selected_action, "F12") # action1 is triggered by the F12
+		self.iface.registerMainWindowAction(self.update_selected_action, "F12") # self.update_selected_action is triggered by the F12
 	       	self.iface.addToolBarIcon(self.update_selected_action)
         	self.iface.addPluginToMenu("&QuickMultiAttributeEdit", self.update_selected_action)
         	#self.iface.layerMenu().findChild(QMenu, 'menuNew').addAction(self.action)

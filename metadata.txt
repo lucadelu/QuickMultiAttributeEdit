@@ -2,8 +2,8 @@
 [general]
 name=QuickMultiAttributeEdit
 qgisMinimumVersion=1.0
-description=Edit and assing same column value in the attribute table for the selected elements
-version=version 0.2
+description=QuickMultiAttributeEdit plugin want to be a very quick and handy way to update a feature for the selected attributes into the current/active layer.
+version=version 0.5
 ; end of mandatory metadata
 
 ; start of optional metadata
