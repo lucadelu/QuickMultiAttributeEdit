@@ -61,8 +61,17 @@ class quickmultiattributeedit_update_selected_dialog(QDialog, Ui_quickmultiattri
 					if (nF > 0):		
 						self.label.setText("<font color='green'>For <b>" + str(nF) +  "</b> selected elements in <b>" + layer.name() + "</b> set value of field</font>" )
 						self.CBfields.setFocus(True)
+						if os.path.exists( tempfile.gettempdir() + "/QuickMultiAttributeEdit_tmp"):
+							in_file = open(tempfile.gettempdir() + '/QuickMultiAttributeEdit_tmp', 'r')
+							file_cont = in_file.read()
+							in_file.close()
+							file_cont_splitted = file_cont.split(',')
+							lastlayer = file_cont_splitted[0]
+							lastfield = file_cont_splitted[1] 
+							if ( self.CBfields.findText(lastfield) > -1 ): # se esiste il nome del campo nel combobox
+								self.CBfields.setCurrentIndex(self.CBfields.findText(lastfield))
 
-					if (nF == 0):		
+					if (nF == 0):
 						infoString = QString("<font color='red'> Please select some elements into current <b>" + layer.name() + "</b> layer</font>")
 						self.label.setText(infoString)
 						#QMessageBox.information(self.iface.mainWindow(),"Warning",infoString)
@@ -127,20 +136,39 @@ class quickmultiattributeedit_update_selected_dialog(QDialog, Ui_quickmultiattri
            if not os.path.exists( tempfile.gettempdir() + "/QuickMultiAttributeEdit_tmp"):
               out_file = open(tempfile.gettempdir() + '/QuickMultiAttributeEdit_tmp', 'w')
               # out_file.write( datetime.datetime.utcnow().strftime("%s") )
-              out_file.write( layer.name() )
+		# self.CBfields.addItem(f.name(), QVariant(f_index) )
+              out_file.write( layer.name() + "," +  unicode(self.CBfields.currentText())  )
               out_file.close()
               QMessageBox.information(self.iface.mainWindow(),"Message",infoString)
            else:
               in_file = open(tempfile.gettempdir() + '/QuickMultiAttributeEdit_tmp', 'r')
-              lastlayer = in_file.read()
+              file_cont = in_file.read()
               in_file.close()
-              # if ( int(datetime.datetime.utcnow().strftime("%s")) - int(lastTime)  > 30 ):
+              file_cont_splitted = file_cont.split(',')
+              lastlayer = file_cont_splitted[0]
+              lastfield = file_cont_splitted[1] 
+              #if ( int(datetime.datetime.utcnow().strftime("%s")) - int(lastTime)  > 30 ):
               if ( lastlayer != layer.name() ):
-                 out_file = open(tempfile.gettempdir() +  '/QuickMultiAttributeEdit_tmp', 'w')
-                 out_file.write( layer.name() )
-                 out_file.close()
-                 QMessageBox.information(self.iface.mainWindow(),"Message",infoString)
-
+                   QMessageBox.information(self.iface.mainWindow(),"Message",infoString)
+					#else:
+						#self.CBfields.setCurrentText(lastfield)
+						# http://qt-project.org/doc/qt-4.8/qcombobox.html#itemData
+						#QMessageBox.information(self.iface.mainWindow(),"Message",str( self.CBfields.findText(lastfield)) ) # get int idx text
+						#QMessageBox.information(self.iface.mainWindow(),"Message",str( self.CBfields.currentIndex()) ) # current selected item
+						#QMessageBox.information(self.iface.mainWindow(),"Message",str( self.CBfields.currentText()) ) # current selected text
+						#QMessageBox.information(self.iface.mainWindow(),"Message",str( self.CBfields.itemText(3)) ) # un item alla pos 4
+						#self.CBfields.setItemText(2,"pippp")
+						#QMessageBox.information(self.iface.mainWindow(),"Message",str( self.CBfields[ self.CBfields.currentIndex() ] ) ) 
+						#if ( self.CBfields.findText(lastfield) > -1 ): # se esiste il nome del campo nel combobox
+							#self.CBfields.setCurrentIndex(self.CBfields.findText(lastfield))
+							#self.CBfields.SetSelection(3)
+							#self.CBfields.current(2) # seleziona detto campo
+							#self.CBfields.current(lastfield)) # seleziona il campo se c'e'
+              out_file = open(tempfile.gettempdir() +  '/QuickMultiAttributeEdit_tmp', 'w')
+              out_file.write( layer.name() + "," +  unicode(self.CBfields.currentText())  )
+              # out_file.write( layer.name() )
+              out_file.close()
+              # if ( lastfield == 
 	   #layer.commitChanges()
 	  else:
 	    QMessageBox.critical(self.iface.mainWindow(),"Error", "Please select at least one feature from <b> " + layer.name() + "</b> current layer")
