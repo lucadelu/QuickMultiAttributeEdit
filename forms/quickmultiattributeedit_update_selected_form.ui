@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>471</width>
-    <height>140</height>
+    <width>499</width>
+    <height>170</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,9 +16,9 @@
   <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
     <rect>
-     <x>120</x>
+     <x>260</x>
      <y>80</y>
-     <width>341</width>
+     <width>201</width>
      <height>32</height>
     </rect>
    </property>
@@ -85,13 +85,29 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>120</y>
-     <width>451</width>
-     <height>16</height>
+     <y>140</y>
+     <width>471</width>
+     <height>21</height>
     </rect>
    </property>
    <property name="text">
     <string>You can also activate this form with F12 funct key - by Marco Braida 2011</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="cBkeepLatestValue">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>90</y>
+     <width>211</width>
+     <height>19</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Keep latest input value</string>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
    </property>
   </widget>
  </widget>

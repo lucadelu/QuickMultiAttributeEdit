@@ -3,11 +3,11 @@
 name=QuickMultiAttributeEdit
 qgisMinimumVersion=1.0
 description=QuickMultiAttributeEdit plugin want to be a very quick and handy way to update a feature for the selected attributes into the current/active layer.
-version=version 0.6
+version=version 0.7
 ; end of mandatory metadata
 
 ; start of optional metadata
-changelog=The plugin now show warning only on layer change and only for the first time the user start to edit plus the plugin now remember the last choose edit field and keep it automatic selected if the user select other elements on the same layer
+changelog=The plugin for the current working layer, now optionally can remember the value of a previous user input.
 
 
 ; tags are in comma separated value format, spaces are allowed
