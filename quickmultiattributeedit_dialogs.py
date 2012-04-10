@@ -12,15 +12,18 @@
 #   Free Software Foundation (www.gnu.org).
 # --------------------------------------------------------
 
-import os.path
+#import os.path
 import operator
 import tempfile
+import datetime
 
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from qgis.core import *
 
 from quickmultiattributeedit_library import *
+
+from os import path, access, R_OK
 
 import sys
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/forms")
@@ -38,11 +41,10 @@ class quickmultiattributeedit_update_selected_dialog(QDialog, Ui_quickmultiattri
 		self.iface = iface
 		self.setupUi(self)
 		#QObject.connect(self.browse, SIGNAL("clicked()"), self.browse_outfile)
-        	QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("accepted()"), self.run)
-
+		QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("accepted()"), self.run)
 		#layer = self.iface.activeLayer() # layer attivo
-	        layer = self.iface.mapCanvas().currentLayer()
-
+		layer = self.iface.mapCanvas().currentLayer()
+		delimchars = "#"
 		if (layer):
 	                provider = layer.dataProvider()
 			#provider.rewind()
@@ -61,15 +63,21 @@ class quickmultiattributeedit_update_selected_dialog(QDialog, Ui_quickmultiattri
 					if (nF > 0):		
 						self.label.setText("<font color='green'>For <b>" + str(nF) +  "</b> selected elements in <b>" + layer.name() + "</b> set value of field</font>" )
 						self.CBfields.setFocus(True)
+						rm_if_too_old_settings_file(tempfile.gettempdir() + "/QuickMultiAttributeEdit_tmp")
 						if os.path.exists( tempfile.gettempdir() + "/QuickMultiAttributeEdit_tmp"):
 							in_file = open(tempfile.gettempdir() + '/QuickMultiAttributeEdit_tmp', 'r')
 							file_cont = in_file.read()
 							in_file.close()
-							file_cont_splitted = file_cont.split(',')
+							file_cont_splitted = file_cont.split(delimchars)
 							lastlayer = file_cont_splitted[0]
-							lastfield = file_cont_splitted[1] 
+							lastfield = file_cont_splitted[1]
+							lastvalue = file_cont_splitted[2]
+							lkeepLatestValue = file_cont_splitted[3]
 							if ( self.CBfields.findText(lastfield) > -1 ): # se esiste il nome del campo nel combobox
 								self.CBfields.setCurrentIndex(self.CBfields.findText(lastfield))
+								self.cBkeepLatestValue.setChecked(str2bool(lkeepLatestValue)) # read thevalue from settings
+								if ( self.cBkeepLatestValue.isChecked() ): # if true to keep latest input value
+									self.QLEvalore.setText(lastvalue)
 
 					if (nF == 0):
 						infoString = QString("<font color='red'> Please select some elements into current <b>" + layer.name() + "</b> layer</font>")
@@ -88,7 +96,7 @@ class quickmultiattributeedit_update_selected_dialog(QDialog, Ui_quickmultiattri
 			self.CBfields.setEnabled(False)
 
 	def run(self):
-
+	 delimchars = "#"
 	 layer = self.iface.mapCanvas().currentLayer()
          if (layer == None):
 		infoString = QString("<font color='red'> <b>No layer selected... Select a layer from the layer list...</b></font>")
@@ -137,16 +145,17 @@ class quickmultiattributeedit_update_selected_dialog(QDialog, Ui_quickmultiattri
               out_file = open(tempfile.gettempdir() + '/QuickMultiAttributeEdit_tmp', 'w')
               # out_file.write( datetime.datetime.utcnow().strftime("%s") )
 		# self.CBfields.addItem(f.name(), QVariant(f_index) )
-              out_file.write( layer.name() + "," +  unicode(self.CBfields.currentText())  )
+              out_file.write( layer.name() + delimchars +  unicode(self.CBfields.currentText()) + delimchars + value + delimchars + bool2str(self.cBkeepLatestValue.isChecked())  )
               out_file.close()
               QMessageBox.information(self.iface.mainWindow(),"Message",infoString)
            else:
               in_file = open(tempfile.gettempdir() + '/QuickMultiAttributeEdit_tmp', 'r')
               file_cont = in_file.read()
               in_file.close()
-              file_cont_splitted = file_cont.split(',')
+              file_cont_splitted = file_cont.split(delimchars)
               lastlayer = file_cont_splitted[0]
               lastfield = file_cont_splitted[1] 
+              lastvalue = file_cont_splitted[2] 
               #if ( int(datetime.datetime.utcnow().strftime("%s")) - int(lastTime)  > 30 ):
               if ( lastlayer != layer.name() ):
                    QMessageBox.information(self.iface.mainWindow(),"Message",infoString)
@@ -165,7 +174,7 @@ class quickmultiattributeedit_update_selected_dialog(QDialog, Ui_quickmultiattri
 							#self.CBfields.current(2) # seleziona detto campo
 							#self.CBfields.current(lastfield)) # seleziona il campo se c'e'
               out_file = open(tempfile.gettempdir() +  '/QuickMultiAttributeEdit_tmp', 'w')
-              out_file.write( layer.name() + "," +  unicode(self.CBfields.currentText())  )
+              out_file.write( layer.name() + delimchars +  unicode(self.CBfields.currentText()) + delimchars + value + delimchars + bool2str(self.cBkeepLatestValue.isChecked())  )
               # out_file.write( layer.name() )
               out_file.close()
               # if ( lastfield == 
@@ -175,6 +184,24 @@ class quickmultiattributeedit_update_selected_dialog(QDialog, Ui_quickmultiattri
 	 else:
 	  QMessageBox.critical(self.iface.mainWindow(),"Error","Please select a layer")
 
+def bool2str(bVar):
+	if bVar:
+		return 'True'
+	else:
+		return 'False'
+
+def str2bool(bVar):
+	if ( bVar == 'True'):
+		return True
+	else:
+		return False
+
+def rm_if_too_old_settings_file(myPath_and_File):
+	if os.path.exists(myPath_and_File) and os.path.isfile(myPath_and_File) and os.access(myPath_and_File, R_OK):
+		now = time.time()
+		tmpfileSectime = os.stat(myPath_and_File)[7] #get last modified time,[8] would be last creation time
+		if( now - tmpfileSectime > 60 * 60 * 12 ): # if settings file is older than 6 hour
+			os.remove( myPath_and_File )
 
 
 
