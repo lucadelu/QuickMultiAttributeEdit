@@ -110,7 +110,7 @@ class quickmultiattributeedit_update_selected_dialog(QDialog, Ui_quickmultiattri
 		#self.label.setText(infoString)
 	    #    return
 
-         value = str(self.QLEvalore.displayText())
+         value = unicode(self.QLEvalore.displayText())
          nPosField = self.CBfields.currentIndex()
 	 #QMessageBox.information(self.iface.mainWindow(), "Update selected", str(nPosField) )
          f_index = self.CBfields.itemData( nPosField ).toInt()[0]
