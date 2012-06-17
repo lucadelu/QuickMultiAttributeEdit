@@ -3,12 +3,11 @@
 name=QuickMultiAttributeEdit
 qgisMinimumVersion=1.0
 description=QuickMultiAttributeEdit plugin want to be a very quick and handy way to update a feature for the selected attributes into the current/active layer.
-version=version 0.9
+version=version 1.0
 ; end of mandatory metadata
 
 ; start of optional metadata 
-changelog= 0.9 - Set the default dialog atcivate focus on the value field
-0.8 - Fixed unicode user input chars.
+changelog= 1.0 - Set the default dialog activate focus on the value field.
 
 
 ; tags are in comma separated value format, spaces are allowed
