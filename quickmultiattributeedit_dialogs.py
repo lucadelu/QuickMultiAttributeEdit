@@ -78,6 +78,7 @@ class quickmultiattributeedit_update_selected_dialog(QDialog, Ui_quickmultiattri
 								self.cBkeepLatestValue.setChecked(str2bool(lkeepLatestValue)) # read thevalue from settings
 								if ( self.cBkeepLatestValue.isChecked() ): # if true to keep latest input value
 									self.QLEvalore.setText(lastvalue)
+									self.QLEvalore.setFocus()
 
 					if (nF == 0):
 						infoString = QString("<font color='red'> Please select some elements into current <b>" + layer.name() + "</b> layer</font>")
