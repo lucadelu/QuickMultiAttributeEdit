@@ -1,23 +1,27 @@
 ; the next section is mandatory
 [general]
 name=QuickMultiAttributeEdit
-qgisMinimumVersion=1.0
-description=QuickMultiAttributeEdit plugin want to be a very quick and handy way to update a feature for the selected attributes into the current/active layer.
-version=version 1.0
+qgisMinimumVersion=2.0
+qgisMaximumVersion=2.99
+description=QuickMultiAttributeEdit plugin is a very quick and handy way to edit an attribute field value for all selected elements in the current/active layer.
+version=version 2.0
+category=Plugins
+author=Marco Braida
+email=marcobra.ubuntu@gmail.com
 ; end of mandatory metadata
 
 ; start of optional metadata 
-changelog= 1.0 - Set the default dialog activate focus on the value field.
+changelog= 2.0 - Made little dress to made it ready to work with Qgis api 2.
 
 
 ; tags are in comma separated value format, spaces are allowed
-tags=vector,attribute,database,update
+tags=vector,attribute,database,update,edit,field
 
 ; these metadata can be empty
 ; in a future version of the web application it will
 ; be probably possible to create a project on redmine
 ; if they are not filled
-;homepage=
+homepage=https://github.com/lucadelu/QuickMultiAttributeEdit
 tracker=http://hub.qgis.org/projects/quickmultiattribute
 repository=https://github.com/lucadelu/QuickMultiAttributeEdit
 icon=icons/quickmultiattributeedit_update_selected.png
