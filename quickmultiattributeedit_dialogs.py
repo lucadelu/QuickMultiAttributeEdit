@@ -40,25 +40,17 @@ class quickmultiattributeedit_update_selected_dialog(QDialog, Ui_quickmultiattri
 		QDialog.__init__(self)
 		self.iface = iface
 		self.setupUi(self)
-		#QObject.connect(self.browse, SIGNAL("clicked()"), self.browse_outfile)
 		QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("accepted()"), self.run)
-		#layer = self.iface.activeLayer() # layer attivo
 		layer = self.iface.mapCanvas().currentLayer()
 		delimchars = "#"
 		if (layer):
 	                provider = layer.dataProvider()
-			#provider.rewind()
-			#feat = QgsFeature()
-        	        #nameLayer = layer.name()
-        	        # print nameLayer
 			fields = provider.fields()
 			if layer.type() == QgsMapLayer.VectorLayer:
 				self.QLEvalore.setText("")
 				self.CBfields.clear()
-				#for name in fields:
-				#	self.CBfields.addItem(fields[name].name())
-				for (f_index, f) in fields.iteritems():
-					self.CBfields.addItem(f.name(), QVariant(f_index) )
+                                for f in fields:
+					self.CBfields.addItem(f.name(), f.name() )
 					nF = layer.selectedFeatureCount()
 					if (nF > 0):		
 						self.label.setText("<font color='green'>For <b>" + str(nF) +  "</b> selected elements in <b>" + layer.name() + "</b> set value of field</font>" )
@@ -81,16 +73,13 @@ class quickmultiattributeedit_update_selected_dialog(QDialog, Ui_quickmultiattri
 									self.QLEvalore.setFocus()
 
 					if (nF == 0):
-						infoString = QString("<font color='red'> Please select some elements into current <b>" + layer.name() + "</b> layer</font>")
+						infoString = unicode("<font color='red'> Please select some elements into current <b>" + layer.name() + "</b> layer</font>")
 						self.label.setText(infoString)
-						#QMessageBox.information(self.iface.mainWindow(),"Warning",infoString)
-						#self.buttonBox.setEnabled(False)
 						self.buttonBox.button(QDialogButtonBox.Ok).setEnabled(False)
 						self.QLEvalore.setEnabled(False)
 						self.CBfields.setEnabled(False)
 		else:
-			infoString = QString("<font color='red'> <b>No layer selected... Select a layer from the layer list...</b></font>")
-			#QMessageBox.information(self.iface.mainWindow(),"Warning",infoString)
+			infoString = unicode("<font color='red'> <b>No layer selected... Select a layer from the layer list...</b></font>")
 			self.label.setText(infoString)
 			self.buttonBox.button(QDialogButtonBox.Ok).setEnabled(False)
 			self.QLEvalore.setEnabled(False)
@@ -100,52 +89,29 @@ class quickmultiattributeedit_update_selected_dialog(QDialog, Ui_quickmultiattri
 	 delimchars = "#"
 	 layer = self.iface.mapCanvas().currentLayer()
          if (layer == None):
-		infoString = QString("<font color='red'> <b>No layer selected... Select a layer from the layer list...</b></font>")
-		#QMessageBox.information(self.iface.mainWindow(),"Warning",infoString)
+		infoString = unicode("<font color='red'> <b>No layer selected... Select a layer from the layer list...</b></font>")
 		self.label.setText(infoString)
 	        return
          if not layer.isEditable():
 		layer.startEditing()
-		#infoString = QString("<font color='red'>Please activate the edit mode on the current <b>" + layer.name() + "</b> layer</font>")
-		#QMessageBox.information(self.iface.mainWindow(),"Warning",infoString)
-		#self.label.setText(infoString)
-	    #    return
-
          value = unicode(self.QLEvalore.displayText())
          nPosField = self.CBfields.currentIndex()
-	 #QMessageBox.information(self.iface.mainWindow(), "Update selected", str(nPosField) )
-         f_index = self.CBfields.itemData( nPosField ).toInt()[0]
-	 #QMessageBox.information(self.iface.mainWindow(), "Update selected", str(f_index) )
+         f_index = self.CBfields.itemData( nPosField )[0]
+         f_name = self.CBfields.itemData( nPosField )
          if len(value) <= 0:
-		infoString = QString("Warning <b> please input a value... </b>")
-         	#QMessageBox.information(self.iface.mainWindow(), "Update selected", "Please input a value...")
+		infoString = unicode("Warning <b> please input a value... </b>")
 		self.label.setText(infoString)
          	return
 	 layer = self.iface.mapCanvas().currentLayer()
-	 #layer = self.iface.activeLayer()
 	 if(layer):		
-	  nF = layer.selectedFeatureCount()
+	  nF = layer.selectedFeatureCount() # numero delle features selezionate
 	  if (nF > 0):		
-	   #layer.startEditing()
-	   oFea = layer.selectedFeaturesIds()
-	   b = QVariant(value) # value of field
-	   if (nF > 1):
-		#for index, field in layer.dataProvider().fields().iteritems():
-		#   if str(field.name()).lower() == "campo2":
-		#            nPosField = index
-		#            nPosField = self.CBfields.currentIndex()
-		#     	QMessageBox.information(self.iface.mainWindow(), "Update selected", str(nPosField) )
-		#if nPosField <= 0:
-		#   return
-	    for i in oFea:
-	     layer.changeAttributeValue(int(i),f_index,b) 
-	   else:
-	    layer.changeAttributeValue(int(oFea[0]),f_index,b) # only one feature selected
-	   infoString = QString("<font color='green'> <b>You can save or abort changes at the end of sessions.<br>Press the Save icon to save or disable the edit mode of layer without save changes to abort...</b></font>")
+	   oFeaIterator = layer.selectedFeatures() # give the selected feauter new in api2
+	   for feature in oFeaIterator: # in oFea2 there is an iterator object (api2)
+	    	   layer.changeAttributeValue(feature.id(),nPosField,value,True) 
+	   infoString = unicode("<font color='green'> <b>You can save or abort changes at the end of sessions.<br>Press the Save icon to save or disable the edit mode of layer without save changes to abort...</b></font>")
            if not os.path.exists( tempfile.gettempdir() + "/QuickMultiAttributeEdit_tmp"):
               out_file = open(tempfile.gettempdir() + '/QuickMultiAttributeEdit_tmp', 'w')
-              # out_file.write( datetime.datetime.utcnow().strftime("%s") )
-		# self.CBfields.addItem(f.name(), QVariant(f_index) )
               out_file.write( layer.name() + delimchars +  unicode(self.CBfields.currentText()) + delimchars + value + delimchars + bool2str(self.cBkeepLatestValue.isChecked())  )
               out_file.close()
               QMessageBox.information(self.iface.mainWindow(),"Message",infoString)
@@ -157,28 +123,11 @@ class quickmultiattributeedit_update_selected_dialog(QDialog, Ui_quickmultiattri
               lastlayer = file_cont_splitted[0]
               lastfield = file_cont_splitted[1] 
               lastvalue = file_cont_splitted[2] 
-              #if ( int(datetime.datetime.utcnow().strftime("%s")) - int(lastTime)  > 30 ):
               if ( lastlayer != layer.name() ):
                    QMessageBox.information(self.iface.mainWindow(),"Message",infoString)
-					#else:
-						#self.CBfields.setCurrentText(lastfield)
-						# http://qt-project.org/doc/qt-4.8/qcombobox.html#itemData
-						#QMessageBox.information(self.iface.mainWindow(),"Message",str( self.CBfields.findText(lastfield)) ) # get int idx text
-						#QMessageBox.information(self.iface.mainWindow(),"Message",str( self.CBfields.currentIndex()) ) # current selected item
-						#QMessageBox.information(self.iface.mainWindow(),"Message",str( self.CBfields.currentText()) ) # current selected text
-						#QMessageBox.information(self.iface.mainWindow(),"Message",str( self.CBfields.itemText(3)) ) # un item alla pos 4
-						#self.CBfields.setItemText(2,"pippp")
-						#QMessageBox.information(self.iface.mainWindow(),"Message",str( self.CBfields[ self.CBfields.currentIndex() ] ) ) 
-						#if ( self.CBfields.findText(lastfield) > -1 ): # se esiste il nome del campo nel combobox
-							#self.CBfields.setCurrentIndex(self.CBfields.findText(lastfield))
-							#self.CBfields.SetSelection(3)
-							#self.CBfields.current(2) # seleziona detto campo
-							#self.CBfields.current(lastfield)) # seleziona il campo se c'e'
               out_file = open(tempfile.gettempdir() +  '/QuickMultiAttributeEdit_tmp', 'w')
               out_file.write( layer.name() + delimchars +  unicode(self.CBfields.currentText()) + delimchars + value + delimchars + bool2str(self.cBkeepLatestValue.isChecked())  )
-              # out_file.write( layer.name() )
               out_file.close()
-              # if ( lastfield == 
 	   #layer.commitChanges()
 	  else:
 	    QMessageBox.critical(self.iface.mainWindow(),"Error", "Please select at least one feature from <b> " + layer.name() + "</b> current layer")
