@@ -21,10 +21,10 @@ def description():
 	return "Edit and assing same column value in the attribute table for the selected elements"
 
 def version():
-	return "1.0"
+	return "2.0"
 
 def qgisMinimumVersion():
-	return "1.0"
+	return "2.0"
 
 def authorName():
 	return "Marco Braida"
