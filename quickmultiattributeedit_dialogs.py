@@ -16,6 +16,7 @@
 import operator
 import tempfile
 import datetime
+import codecs
 
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
@@ -43,10 +44,12 @@ class quickmultiattributeedit_update_selected_dialog(QDialog, Ui_quickmultiattri
 		QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("accepted()"), self.run)
 		layer = self.iface.mapCanvas().currentLayer()
 		delimchars = "#"
-		if (layer):
-	                provider = layer.dataProvider()
-			fields = provider.fields()
+
+		if (layer) and layer.type() == QgsMapLayer.VectorLayer:
+			
 			if layer.type() == QgsMapLayer.VectorLayer:
+				provider = layer.dataProvider()
+				fields = provider.fields()
 				self.QLEvalore.setText("")
 				self.CBfields.clear()
                                 for f in fields:
@@ -57,8 +60,10 @@ class quickmultiattributeedit_update_selected_dialog(QDialog, Ui_quickmultiattri
 						self.CBfields.setFocus(True)
 						rm_if_too_old_settings_file(tempfile.gettempdir() + "/QuickMultiAttributeEdit_tmp")
 						if os.path.exists( tempfile.gettempdir() + "/QuickMultiAttributeEdit_tmp"):
-							in_file = open(tempfile.gettempdir() + '/QuickMultiAttributeEdit_tmp', 'r')
+							#in_file = open(tempfile.gettempdir() + '/QuickMultiAttributeEdit_tmp', 'r')
+							in_file = codecs.open(tempfile.gettempdir() + '/QuickMultiAttributeEdit_tmp', encoding='utf8')
 							file_cont = in_file.read()
+							
 							in_file.close()
 							file_cont_splitted = file_cont.split(delimchars)
 							lastlayer = file_cont_splitted[0]
@@ -78,6 +83,12 @@ class quickmultiattributeedit_update_selected_dialog(QDialog, Ui_quickmultiattri
 						self.buttonBox.button(QDialogButtonBox.Ok).setEnabled(False)
 						self.QLEvalore.setEnabled(False)
 						self.CBfields.setEnabled(False)
+		elif (layer) and layer.type() != QgsMapLayer.VectorLayer:
+			infoString = unicode("<font color='red'> Layer <b>" + layer.name() + "</b> is not a vector layer</font>")
+			self.label.setText(infoString)
+			self.buttonBox.button(QDialogButtonBox.Ok).setEnabled(False)
+			self.QLEvalore.setEnabled(False)
+			self.CBfields.setEnabled(False)			
 		else:
 			infoString = unicode("<font color='red'> <b>No layer selected... Select a layer from the layer list...</b></font>")
 			self.label.setText(infoString)
@@ -112,7 +123,8 @@ class quickmultiattributeedit_update_selected_dialog(QDialog, Ui_quickmultiattri
 	   infoString = unicode("<font color='green'> <b>You can save or abort changes at the end of sessions.<br>Press the Save icon to save or disable the edit mode of layer without save changes to abort...</b></font>")
            if not os.path.exists( tempfile.gettempdir() + "/QuickMultiAttributeEdit_tmp"):
               out_file = open(tempfile.gettempdir() + '/QuickMultiAttributeEdit_tmp', 'w')
-              out_file.write( layer.name() + delimchars +  unicode(self.CBfields.currentText()) + delimchars + value + delimchars + bool2str(self.cBkeepLatestValue.isChecked())  )
+              #out_file.write( layer.name() + delimchars +  unicode(self.CBfields.currentText()) + delimchars + value + delimchars + bool2str(self.cBkeepLatestValue.isChecked())  )
+              out_file.write( (layer.name() + delimchars +  self.CBfields.currentText() + delimchars + value + delimchars + bool2str(self.cBkeepLatestValue.isChecked())).encode('UTF-8')  )
               out_file.close()
               QMessageBox.information(self.iface.mainWindow(),"Message",infoString)
            else:
@@ -126,7 +138,8 @@ class quickmultiattributeedit_update_selected_dialog(QDialog, Ui_quickmultiattri
               if ( lastlayer != layer.name() ):
                    QMessageBox.information(self.iface.mainWindow(),"Message",infoString)
               out_file = open(tempfile.gettempdir() +  '/QuickMultiAttributeEdit_tmp', 'w')
-              out_file.write( layer.name() + delimchars +  unicode(self.CBfields.currentText()) + delimchars + value + delimchars + bool2str(self.cBkeepLatestValue.isChecked())  )
+              #out_file.write( layer.name() + delimchars +  unicode(self.CBfields.currentText()) + delimchars + value + delimchars + bool2str(self.cBkeepLatestValue.isChecked())  )
+              out_file.write( (layer.name() + delimchars +  self.CBfields.currentText() + delimchars + value + delimchars + bool2str(self.cBkeepLatestValue.isChecked())).encode('UTF-8')  )
               out_file.close()
 	   #layer.commitChanges()
 	  else:
@@ -150,7 +163,7 @@ def rm_if_too_old_settings_file(myPath_and_File):
 	if os.path.exists(myPath_and_File) and os.path.isfile(myPath_and_File) and os.access(myPath_and_File, R_OK):
 		now = time.time()
 		tmpfileSectime = os.stat(myPath_and_File)[7] #get last modified time,[8] would be last creation time
-		if( now - tmpfileSectime > 60 * 60 * 12 ): # if settings file is older than 6 hour
+		if( now - tmpfileSectime > 60 * 60 * 12 ): # if settings file is older than 12 hour
 			os.remove( myPath_and_File )
 
 
