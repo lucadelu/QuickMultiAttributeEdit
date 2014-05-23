@@ -4,14 +4,15 @@ name=QuickMultiAttributeEdit
 qgisMinimumVersion=2.0
 qgisMaximumVersion=2.99
 description=QuickMultiAttributeEdit plugin is a quick and handy way to edit an attribute field value for all selected elements in the current/active layer.
-version=version 2.1
+version=version 2.1.1
 category=Plugins
 author=Marco Braida
 email=marcobra.ubuntu@gmail.com
 ; end of mandatory metadata
 
 ; start of optional metadata 
-changelog= 2.1 - Dress error on selecting not vector layers and some unicode errors.
+changelog= 2014/05/23 v. 2.1.1 - Dress plugin icon duplicates on qgis plugins menu on plugin activate/deactivate.
+           2014/05/22 v. 2.1 - Dress error on selecting not vector layers and some unicode errors.
 
 
 ; tags are in comma separated value format, spaces are allowed
