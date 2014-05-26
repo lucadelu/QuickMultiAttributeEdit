@@ -36,9 +36,8 @@ class quickmultiattributeedit_menu:
 
 	def unload(self):
 		self.iface.unregisterMainWindowAction(self.update_selected_action)
-    		self.iface.removePluginMenu("&quickmultiattributeedit", self.update_selected_action)
 		self.iface.removeToolBarIcon(self.update_selected_action)
-
+		self.iface.removePluginMenu("&QuickMultiAttributeEdit", self.update_selected_action)
 
 	def update_selected(self):
 		dialog = quickmultiattributeedit_update_selected_dialog(self.iface)
